@@ -2,6 +2,7 @@
 
 echo "Creating an environment file"      \
   && cp .env.sample .env                 \
+  && mkdir -p db/postgres                \
   && echo "Building images"              \
   && docker-compose build                \
   && echo "Installing rails"             \
