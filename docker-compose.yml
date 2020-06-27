@@ -1,0 +1,89 @@
+version: '3.4'
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: Dockerfile.dev
+    args:
+      RUBY_VERSION: '2.7.0'
+      PG_MAJOR_VERSION: '12'
+      NODE_MAJOR_VERSION: '12'
+      YARN_VERSION: '1.22.4'
+  user: $UID:$GID
+  env_file: .env
+  tmpfs:
+    - /tmp
+
+x-rails: &rails
+  <<: *app
+  # Keeps the stdin open, so we can attach to our app container's process and
+  # do stuff such as `byebug` or `binding.pry`
+  stdin_open: true
+  # Allows us to send signals (CTRL+C, CTRL+P + CTRL+Q) into the container
+  tty: true
+  volumes:
+    - .:/app:cached
+    - bundle:/usr/local/bundle
+  environment:
+    WEBPACKER_DEV_SERVER_HOST: webpacker
+    HISTFILE: /app/log/.bash_history.log
+  depends_on:
+    - db
+    - redis
+    - mail
+
+services:
+  web:
+    <<: *rails
+    command: bundle exec rails server -b 0.0.0.0
+    ports:
+      - '3000:3000'
+
+  job:
+    <<: *rails
+    command: bundle exec sidekiq -C config/sidekiq.yml
+
+  webpacker:
+    <<: *app
+    command: ./bin/webpack-dev-server
+    ports:
+      - 3035
+    volumes:
+      - .:/app
+      - bundle:/usr/local/bundle
+    environment:
+      WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
+
+  db:
+    image: postgres:12
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./db/postgres:/docker-entrypoint-initdb.d/
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+
+  redis:
+    image: redis
+    volumes:
+      - redis:/data
+
+  mail:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+
+  pgweb:
+    image: sosedoff/pgweb
+    env_file: .env
+    command: /usr/bin/pgweb -s --bind=0.0.0.0
+    ports:
+      - '8081:8081'
+    depends_on:
+      - db
+
+volumes:
+  postgres:
+  redis:
+  bundle:
+

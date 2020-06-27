@@ -1,0 +1,33 @@
+# Ignore version control files:
+.git/
+.gitignore
+
+# Ignore docker and environment files:
+Dockerfile*
+docker-compose*.yml
+.env*
+.dockerignore
+
+# Ignore log files:
+log/*.log
+
+# Ignore temporary files:
+tmp/
+
+# Ignore test files:
+.rspec
+spec/
+
+# Ignore OS artifacts:
+**/.DS_Store
+
+.rspec
+
+# Ignore Development container's Home artifacts:
+.bash_history
+.byebug_hist
+.byebug_history
+
+# bundler stuff
+.bundle/*
+
