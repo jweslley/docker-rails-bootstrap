@@ -5,10 +5,7 @@ x-app: &app
     context: .
     dockerfile: Dockerfile.dev
     args:
-      RUBY_VERSION: '2.7.0'
-      PG_MAJOR_VERSION: '12'
-      NODE_MAJOR_VERSION: '12'
-      YARN_VERSION: '1.22.4'
+      RUBY_VERSION: '3.1.1'
   user: $UID:$GID
   env_file: .env
   tmpfs:
@@ -55,15 +52,15 @@ services:
       WEBPACKER_DEV_SERVER_HOST: 0.0.0.0
 
   db:
-    image: postgres:12
+    image: postgres:14
     volumes:
       - postgres:/var/lib/postgresql/data
-      - ./db/postgres:/docker-entrypoint-initdb.d/
+      - ./docker/postgres:/docker-entrypoint-initdb.d/
     environment:
       POSTGRES_HOST_AUTH_METHOD: trust
 
   redis:
-    image: redis
+    image: redis:6
     volumes:
       - redis:/data
 

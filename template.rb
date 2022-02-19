@@ -10,7 +10,7 @@ after_bundle do
       /.env
       /.cache
       /.yarn
-      /db/postgres/backup.dump
+      /docker/postgres/backup.dump
     EOF
   end
 
@@ -37,10 +37,10 @@ after_bundle do
       - default
       - mailers
       - low
-    
+
     production:
       :concurrency: 5
-    
+
     staging:
       :concurrency: 5
   EOF
@@ -66,16 +66,6 @@ after_bundle do
         :authentication => :plain
       }
     end
-  EOF
-
-  file 'db/postgres/init-db.sh',  <<~EOF
-    #!/bin/sh
-
-    BACKUP_FILE="/docker-entrypoint-initdb.d/backup.dump"
-    if [ -f "$BACKUP_FILE" ]; then
-      pg_restore --verbose --clean --no-acl --no-owner -U "$POSTGRES_USER" -d "$POSTGRES_DB" "$BACKUP_FILE"
-    fi
-    exit
   EOF
 end
 

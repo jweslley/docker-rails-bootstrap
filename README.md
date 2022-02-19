@@ -2,7 +2,7 @@
 
 An opinionated docker-compose setup for Rails apps. 
 
-Currently includes ruby 2.7, postgres 12, node 12, webpacker, sidekiq, [mailhog][] and [pgweb][].
+Currently includes ruby 3.1.1, postgres 14, redis 6, node 16, webpacker, sidekiq, [mailhog][] and [pgweb][].
 
 > This setup was created for development. 
 
@@ -106,21 +106,22 @@ When you start up the application again, a new volume will be automatically crea
 You can restore an database dump to use in your local environment, for this follow the steps below:
 
 1. reset the database in your local environment like explained in [Resetting the database](#resetting-the-database)
-2. copy your database dump to `db/postgres/backup.dump`
+2. copy your database dump to `docker/postgres/backup.dump`
 3. start up your application
 
 You need to reset the database because the dump only will be loaded in fresh installations to avoid overwriting of existing data.
 
 ### Customizing stack
 
-Currently this setup includes ruby 2.7, postgres 12, node 12 and yarn 1.22. However you can customize the version of any of them, to this open the file `docker-compose.yml`, locate the following lines and edit the versions you would like to use.
+Currently this setup includes ruby 3.1.1, postgres 14 and redis 6. However you can customize the version of any of them.
+
+To customize ruby version, open the file `docker-compose.yml`, locate the following line and edit the version you would like to use.
 
 ```yaml
-RUBY_VERSION: '2.7.0'
-PG_MAJOR_VERSION: '12'
-NODE_MAJOR_VERSION: '12'
-YARN_VERSION: '1.22.4'
+RUBY_VERSION: '3.1.1'
 ```
+
+To customize postgres and/or redis, open `docker-compose.yml` file and change image version as you wish.
 
 After editing, execute `docker-compose build` to rebuild the application's images.
 

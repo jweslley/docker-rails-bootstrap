@@ -1,48 +1,28 @@
 ARG RUBY_VERSION
-FROM ruby:$RUBY_VERSION
-
-ARG PG_MAJOR_VERSION
-ARG NODE_MAJOR_VERSION
-ARG YARN_VERSION
-
-# Add PostgreSQL to sources list
-RUN curl -sSL https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-  && echo 'deb http://apt.postgresql.org/pub/repos/apt/ buster-pgdg main' $PG_MAJOR_VERSION > /etc/apt/sources.list.d/pgdg.list
-
-# Add NodeJS to sources list
-RUN curl -sL https://deb.nodesource.com/setup_$NODE_MAJOR_VERSION.x | bash -
-
-# Add Yarn to the sources list
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
-  && echo 'deb http://dl.yarnpkg.com/debian/ stable main' > /etc/apt/sources.list.d/yarn.list
-
-# Install dependencies
-RUN apt-get update -qq \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -yq --no-install-recommends \
-    build-essential \
-    gnupg2 \
-    curl \
-    vim \
-    git \
-    libpq-dev \
-    postgresql-client-$PG_MAJOR_VERSION \
-    nodejs \
-    yarn=$YARN_VERSION-1 \
-  && apt-get clean \
-  && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-  && truncate -s 0 /var/log/*log
+FROM ruby:$RUBY_VERSION-alpine
 
 # Configure environment variables
 ENV LANG=C.UTF-8 \
-  EDITOR=vim     \
   HOME=/app
 
 # Make a $HOME
 RUN mkdir $HOME
 WORKDIR $HOME
 
-# Add a script to be executed every time the container starts.
-COPY entrypoint-dev.sh /usr/bin/
-RUN chmod +x /usr/bin/entrypoint-dev.sh
-ENTRYPOINT ["entrypoint-dev.sh"]
+# Install dependencies
+RUN apk update \
+  && apk add --no-cache \
+    build-base \
+    git \
+    netcat-openbsd \
+    nodejs \
+    postgresql-dev \
+    tzdata \
+    yarn \
+  && rm -rf /var/cache/apk/*
 
+# Add a script to be executed every time the container starts.
+COPY docker/rails/entrypoint-dev.sh /usr/bin/
+RUN chmod +x /usr/bin/entrypoint-dev.sh
+
+ENTRYPOINT ["entrypoint-dev.sh"]
