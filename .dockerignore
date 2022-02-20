@@ -24,9 +24,7 @@ spec/
 .rspec
 
 # Ignore Development container's Home artifacts:
-.bash_history
-.byebug_hist
-.byebug_history
+.pry_history
 
 # bundler stuff
 .bundle/*

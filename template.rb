@@ -1,6 +1,10 @@
 
 gem 'sidekiq'
 
+gem_group :development, :test do
+  gem 'pry'
+end
+
 after_bundle do
   # uncomment_lines 'config/puma.rb', /WEB_CONCURRENCY/
   # uncomment_lines 'config/puma.rb', /preload_app/
