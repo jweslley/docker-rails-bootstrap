@@ -141,3 +141,8 @@ See the LICENSE file provided with the source distribution for full details.
 [mailhog]: https://github.com/mailhog/MailHog "Web and API based SMTP testing"
 [pgweb]: https://sosedoff.github.io/pgweb     "Cross-platform client for PostgreSQL databases"
 [perms]: https://github.com/docker/compose/issues/1532
+
+
+### Infrastructure model
+
+![Infrastructure model](.infragenie/infrastructure_model.png)
